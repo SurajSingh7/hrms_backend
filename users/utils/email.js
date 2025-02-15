@@ -1,4 +1,6 @@
 import nodemailer from 'nodemailer';
+import { configDotenv } from 'dotenv';
+configDotenv();
 
 const sendEmail = async (option) => {
     //CREATE A TRANSPORTER
@@ -9,8 +11,8 @@ let transporter = nodemailer.createTransport({
     port: 587,
     secure: false, // use TLS
     auth: {
-        user: 'no-reply@gtel.in', // Your Microsoft email
-        pass: 'Wac00935', // Your Microsoft email password
+        user: process.env.MAIL, // Your Microsoft email
+        pass: process.env.PASSWORD, // Your Microsoft email password
     },
     tls: {
         ciphers: 'SSLv3',
