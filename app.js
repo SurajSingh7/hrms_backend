@@ -41,7 +41,7 @@ app.use(
   cors({
     methods: 'GET,POST,PUT,DELETE,OPTIONS',
     credentials: true,
-    origin: ['https://hrms.gtel.in', 'http://localhost:3000', "http://10.253.71.78:3004" ],
+    origin: ['https://hrms.gtel.in', 'http://localhost:3000', "http://10.253.71.78:3004","http://10.253.71.78:3007/" ],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   })
 );
