@@ -160,7 +160,7 @@ const Logout = (req, res) => {
       maxAge: 0,
       sameSite: 'None',
       path: '/',
-      // domain: '.gtel.in',
+      domain: '.gtel.in'
     });
 
   res.send({  message: "successfully" });
