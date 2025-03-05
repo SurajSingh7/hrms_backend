@@ -1,3 +1,4 @@
+
 import jwt from "jsonwebtoken";
 import BasicEmployee from "../models/BasicEmployee.js";
 import Employee from "../models/Employee.js";
@@ -27,6 +28,7 @@ import mongoose from "mongoose";
 
 
 let image=[];
+const isProduction = process.env.NODE_ENV === 'production';
 
 const signUp = async (req, res) => {
   try {
@@ -142,12 +144,15 @@ const Loginn = async (req, res) => {
 
   const token = jwt.sign({ _id: user._id, isMfaActive: true },
     process.env.SECRET_STR,
-    { expiresIn: "5m" });
+    { expiresIn: "1d" });
 
   res.cookie("mfaSession", token, {
+    // domain: ".gtel.in",
     httpOnly: true,
+    secure: true,
     sameSite: "lax",
     maxAge: 24 * 60 * 60 * 1000, // 1 day
+    ...(isProduction && { domain: '.gtel.in' })
   });
 
   res.send({ message: "success" });
@@ -160,7 +165,8 @@ const Logout = (req, res) => {
       maxAge: 0,
       sameSite: 'None',
       path: '/',
-      domain: '.gtel.in'
+      //  domain: '.gtel.in'
+      ...(isProduction && { domain: '.gtel.in' })
     });
 
   res.send({  message: "successfully" });
@@ -249,6 +255,7 @@ const authenticatedData = async (req, res) => {
         $project: {
           // Specify the fields to include or exclude in the output
           "email":1,
+          "departmentOfficialNumber":1,
           "role._id": 1,
           "role.name": 1,
           "role.permissions": 1,
@@ -456,12 +463,23 @@ const verify2Fa = async (req, res) => {
 
 
     res.cookie("userSession", authToken, {
+      // domain:".gtel.in",
       httpOnly: true,
+      secure:true,
       sameSite: "lax",
       maxAge: 24 * 60 * 60 * 1000, // 1 day
+      ...(isProduction && { domain: '.gtel.in' })
     });
 
-    res.clearCookie("mfaSession");
+    res.cookie('mfaSession', '', { 
+      httpOnly: true,
+      secure: true,
+      maxAge: 0,
+      sameSite: 'None',
+      path: '/',
+      ...(isProduction && { domain: '.gtel.in' })
+      // domain: '.gtel.in'
+    });
 
     return res.status(200).json({ success: true, message: "2FA is enabled", isAdmin });
   }

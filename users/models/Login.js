@@ -46,7 +46,10 @@ const userSchema = new mongoose.Schema({
   },
   passwordChangedAt:Date,
   passwordResetToken:String,
-  paswordResetTokenExpires:Date
+  paswordResetTokenExpires:Date,
+  departmentOfficialNumber: {
+    type: Number,
+  },
 
 },{timestamps : true});
 
