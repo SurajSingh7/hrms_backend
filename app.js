@@ -3,6 +3,8 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
+
+//Routes
 import shiftRoutes from './users/routes/shiftRoutes.js';
 import tempScheduleRoutes from './users/routes/tempScheduleRoutes.js';
 import employeeEnrollMappingRoutes from './users/routes/employeeEnrollMappingRoutes.js';
@@ -24,14 +26,19 @@ import hrmsRoute from './hrms/routes/hrmsRoute.js';
 import companyRoute from './hrms/routes/companyRoute.js';
 import areaRoute from './hrms/routes/areaRoute.js';
 import documentRoutes from './users/routes/documentRoutes.js';
+import dispensaryRoutes from "./src/dispensaryManagement/routes/dispensary-location-route.js";
+import connectDatabase from './config/connectDatabase.js';
 
 dotenv.config();
+
 
 const app = express();
 const DB_URL = process.env.DB_URL;
 
+await connectDatabase(DB_URL, "userDB");
+
 // Middleware
-app.use(express.json({ limit: '500mb' })); // Increase the payload limit
+app.use(express.json({ limit: '500mb' })); 
 app.use(express.urlencoded({ limit: '500mb', extended: true }));
 app.use(cookieParser());
 app.use(bodyParser.json());
@@ -53,10 +60,6 @@ app.use(
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
   })
 );
-
-
-
-
 
 // Routes
 app.use('/hrms', shiftRoutes);
@@ -81,15 +84,16 @@ app.use('/hrms', companyRoute);
 app.use('/hrms', areaRoute);
 app.use('/hrms', documentRoutes);
 
-// Root Route
+//New Routes 
+app.use('/api/dispensary', dispensaryRoutes);
+
 app.get('/', (req, res) => {
   return res.json({
     success: true,
-    message: 'Your server is up and running....💕',
+    message: 'Report Ok',
   });
 });
 
-// 404 Fallback Route
 app.use('/*', (req, res) => {
   return res.status(404).json({
     success: false,
@@ -97,5 +101,4 @@ app.use('/*', (req, res) => {
   });
 });
 
-// Export app for use in other files
 export default app;
