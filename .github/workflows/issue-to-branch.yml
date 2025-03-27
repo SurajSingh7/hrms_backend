@@ -1,0 +1,36 @@
+name: Auto Create Branch from Issue
+
+on:
+  issues:
+    types: [opened]  # Runs when a new issue is opened
+
+jobs:
+  create-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Create Branch
+        run: |
+          ISSUE_NUMBER=${{ github.event.issue.number }}
+          ISSUE_TITLE=${{ github.event.issue.title }}
+          BRANCH_NAME=$(echo "issue-${ISSUE_NUMBER}-${ISSUE_TITLE}" | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
+          
+          git config --global user.name "github-actions"
+          git config --global user.email "actions@github.com"
+          git checkout -b $BRANCH_NAME
+          git push origin $BRANCH_NAME
+
+      - name: Comment on Issue
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const issue_number = context.payload.issue.number;
+            const branch_name = `issue-${issue_number}-${context.payload.issue.title.replace(/\s+/g, '-').toLowerCase()}`;
+            github.rest.issues.createComment({
+              issue_number: issue_number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `🚀 Branch **${branch_name}** created automatically for this issue.`
+            });

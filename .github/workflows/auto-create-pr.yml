@@ -1,0 +1,24 @@
+name: Auto Create Pull Request
+
+on:
+  push:
+    branches:
+      - "issue-*"
+
+jobs:
+  create-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Pull Request
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const issue_number = context.ref.match(/issue-(\d+)-/)[1];
+            github.rest.pulls.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Fix Issue #${issue_number}`,
+              head: context.ref.replace("refs/heads/", ""),
+              base: "main",
+              body: `🔗 This PR fixes issue #${issue_number}.`,
+            });

@@ -1,0 +1,29 @@
+name: Auto Link Commits to Issues
+
+on:
+  push:
+    branches:
+      - "issue-*"
+
+jobs:
+  link-issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Extract Issue Number
+        run: |
+          ISSUE_NUMBER=$(echo "${GITHUB_REF#refs/heads/issue-}" | cut -d'-' -f1)
+          echo "Issue Number: $ISSUE_NUMBER"
+          echo "ISSUE_NUMBER=$ISSUE_NUMBER" >> $GITHUB_ENV
+
+      - name: Comment on Issue
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const issue_number = process.env.ISSUE_NUMBER;
+            if (!issue_number) return;
+            github.rest.issues.createComment({
+              issue_number: issue_number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `🔗 A commit was pushed to branch related to this issue: ${context.payload.commits[0].message}`
+            });
