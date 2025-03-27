@@ -39,13 +39,17 @@ export default class DispensaryLocationController {
     getDispensary = async (req, res) => {
         try {
             const { page, limit, skip } = PaginationHandler.paginate(req);
-            let query = {};
+            let query = {status: true};
 
             if (req.query.name) {
                 query.name = req.query.name;
             }
             if(req.query.location){
                 query.location = req.query.location;
+            }
+
+            if (req.query.status !== undefined) {
+                query.status = req.query.status === "false" ? false : true;
             }
 
             const data = await DBHelper.findAllOrFail(DispensaryLocation, skip, limit, { createdAt: -1 }, query);
@@ -67,9 +71,15 @@ export default class DispensaryLocationController {
     deleteDispensary = async (req, res) => {
         try {
             const { id } = req.params;
-            const deleteData = await DBHelper.delete(DispensaryLocation, id);
+            const getData = await DBHelper.findByIdOrFail(DispensaryLocation, id);
+            if (!getData) {
+                return ResponseHandler.error(res, "Dispensary location not found", 404);
+            }
+            const newStatus = !getData.status
+
+            const deleteData = await DBHelper.softDelete(DispensaryLocation,newStatus, id);
             if (!deleteData) {
-                return ResponseHandler.error(res, "Failed to delete dispensary location", 400);
+                return ResponseHandler.error(res, "Data not found for deletion", 400);
             }
             return ResponseHandler.success(res, "Dispensary location deleted successfully", deleteData, '', 200);
         } catch (error) {
@@ -85,7 +95,7 @@ export default class DispensaryLocationController {
             if (!data) {
                 return ResponseHandler.error(res, "Dispensary location not found", 404);
             }
-            return ResponseHandler.success(res, "Dispensary location retrieved successfully", data, '', 200);
+            return ResponseHandler.success(res, "Dispensary location retrieved successfully",'', '', 200);
         } catch (error) {
             console.error('Error fetching dispensary by ID:', error);
             return ResponseHandler.error(res, error.message || "Internal Server Error", 500);

@@ -45,6 +45,16 @@ class DBHelper {
             return null;
         }
     }
+
+    static async softDelete(model,newStatus,id){
+        try{
+            return await model.findByIdAndUpdate(id,{status : newStatus},{new:true});
+        }
+        catch(error){
+            console.error(`DBHelper.softDelete Error: ${error.message}`);
+            return null;
+        }
+    }
 }
 
 export default DBHelper;
