@@ -12,22 +12,34 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Create Branch
+        env:
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
         run: |
-          ISSUE_NUMBER=${{ github.event.issue.number }}
-          ISSUE_TITLE=${{ github.event.issue.title }}
-          BRANCH_NAME=$(echo "issue-${ISSUE_NUMBER}-${ISSUE_TITLE}" | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
-          
+          echo "Issue Number: $ISSUE_NUMBER"
+          echo "Issue Title: $ISSUE_TITLE"
+
+          # Ensure the issue title is safe for branch naming
+          SAFE_TITLE=$(echo "$ISSUE_TITLE" | tr '[:upper:]' '[:lower:]' | tr ' ' '-' | tr -cd '[:alnum:]-')
+
+          # Construct the branch name
+          BRANCH_NAME="issue-${ISSUE_NUMBER}-${SAFE_TITLE}"
+          echo "Branch Name: $BRANCH_NAME"
+
+          # Set up Git and create the branch
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
-          git checkout -b $BRANCH_NAME
-          git push origin $BRANCH_NAME
+          git checkout -b "$BRANCH_NAME"
+          git push origin "$BRANCH_NAME"
 
       - name: Comment on Issue
         uses: actions/github-script@v6
         with:
           script: |
             const issue_number = context.payload.issue.number;
-            const branch_name = `issue-${issue_number}-${context.payload.issue.title.replace(/\s+/g, '-').toLowerCase()}`;
+            const issue_title = context.payload.issue.title.replace(/\s+/g, '-').toLowerCase().replace(/[^a-z0-9-]/g, '');
+            const branch_name = `issue-${issue_number}-${issue_title}`;
+
             github.rest.issues.createComment({
               issue_number: issue_number,
               owner: context.repo.owner,
