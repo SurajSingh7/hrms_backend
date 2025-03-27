@@ -7,7 +7,7 @@ on:
 permissions: 
   contents: read 
   issues: write # ✅ This gives write access to push changes
-  pull-requests: write
+  
 
 jobs:
   create-branch:
