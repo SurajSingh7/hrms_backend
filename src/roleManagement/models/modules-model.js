@@ -6,7 +6,7 @@ const ModuleSchema = new Schema({
     description: {type: String},
     url : {type: String},
     icon : {type: String},
-    parent : {type: Schema.Types.ObjectId, ref: 'Module', default : null},
+    parent_id : {type: Schema.Types.ObjectId, ref: 'Module', default : null},
     display_order : {type: Number, default: 0},
     is_menu_item : {type: Boolean, default: false},
     status : {type : Boolean, default: true},

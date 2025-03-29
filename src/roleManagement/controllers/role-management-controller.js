@@ -376,8 +376,22 @@ export default class RoleManagementController {
 
     createModule = async(req, res) => {
         try{
-            const {name, description, url, icon,parent,display_order,is_menu_item} = req.body;
-            const data = await DBHelper.create(departmentModel, {name, description, url, icon,parent,display_order ,is_menu_item});
+            const {name, description, url, icon,parent_id,display_order,is_menu_item} = req.body;
+
+            const existingModule = await DBHelper.findByCriteria(moduleModel, {name : name});
+            if(existingModule) {
+                return ResponseHandler.error(res, "module with this name already exists", 400);
+            }
+            // Find valid parent id 
+            if(parent_id){
+                const parentModule = await DBHelper.findByCriteria(moduleModel, {parent_id : parent_id});
+
+                if(!parentModule) {
+                    return ResponseHandler.error(res, "Invalid or Inactive parent module id", 400);
+                }
+            }
+
+            const data = await DBHelper.create(moduleModel, {name, description, url, icon,parent_id,display_order ,is_menu_item});
             if(!data) {
                 return ResponseHandler.error(res, "Failed to create module", 400);
             }
@@ -400,7 +414,7 @@ export default class RoleManagementController {
             if(!data) {
                 return ResponseHandler.error(res, "module not found", 404);
             }
-            const { name, description, url, icon,parent,display_order,is_menu_item } = req.body;
+            const { name, description, url, icon,parent_id,display_order,is_menu_item } = req.body;
 
             if(req.body.name && req.body.name !== data.name) {
                 const dataWithSameName = await DBHelper.findByCriteria(moduleModel, { name: req.body.name });
@@ -409,7 +423,7 @@ export default class RoleManagementController {
                 }
             }
             
-            const updatedData = await DBHelper.update(moduleModel, id, { name, description, url, icon,parent,display_order,is_menu_item });
+            const updatedData = await DBHelper.update(moduleModel, id, { name, description, url, icon,parent_id,display_order,is_menu_item });
             if(!updatedData) {
                 return ResponseHandler.error(res, "Failed to update module", 400);
             }
@@ -475,7 +489,8 @@ export default class RoleManagementController {
             }
 
             const newStatus = !data.status;
-            const updatedData = await DBHelper.softDelete(moduleModel,{ status: newStatus }, id);
+            console.log('newStatus', newStatus);
+            const updatedData = await DBHelper.softDelete(moduleModel,newStatus, id);
             if(!updatedData){
                 return ResponseHandler.error(res, "An error occurred while soft deleting module", 400);
             }
