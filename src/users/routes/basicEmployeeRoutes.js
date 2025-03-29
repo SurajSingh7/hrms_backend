@@ -5,7 +5,7 @@ import {
   createEmployee,
   updateEmployee,
   deleteEmployee,
-  getEmployeeByCode,  // Import the new controller method
+  getEmployeeByCode,  
 } from '../controllers/basicEmployeeController.js';
 
 const router = express.Router();
@@ -19,32 +19,3 @@ router.put('/basicemployees/:id', updateEmployee);
 router.delete('/basicemployees/:id', deleteEmployee);
 
 export default router;
-
-
-
-
-
-
-
-
-
-
-// import express from 'express';
-// import {
-//   getAllEmployees,
-//   getEmployeeById,
-//   createEmployee,
-//   updateEmployee,
-//   deleteEmployee,
-// } from '../controllers/basicEmployeeController.js';
-
-// const router = express.Router();
-
-// // Employee routes
-// router.get('/basicemployees', getAllEmployees);
-// router.get('/basicemployees/:id', getEmployeeById);
-// router.post('/basicemployees', createEmployee);
-// router.put('/basicemployees/:id', updateEmployee);
-// router.delete('/basicemployees/:id', deleteEmployee);
-
-// export default router;

@@ -1,20 +1,9 @@
-// controllers/employeeController.js
 import Employee from '../models/Employee.js';
 import Login from '../models/Login.js';
 
 let formData = {};
-// Create a new employee
 export const createEmployee = async (req, res) => {
     formData.step2 = req.body;
-  //  let data = new Employee(req.body);
-  //  await data.save();
-    //console.log(formData)
-    // try {
-    //     const newEmployee = await Employee.create(req.body);
-    //     res.status(201).json(newEmployee);
-    // } catch (error) {
-    //     res.status(500).json({ error: error.message });
-    // }
     res.status(200).send('Step 2 data stored');
 };
 
@@ -22,11 +11,6 @@ export const createEmployee = async (req, res) => {
 export const getAllEmployees = async (req, res) => {
 
     try {
-      //  const employees = await Employee.find();
-    //   const employees = await Login.find({}).populate({
-    //     path:'basicemployees',
-    //     select:''
-    //   })
     const employees = await Login.aggregate([
         {
           $lookup: {
@@ -73,7 +57,6 @@ export const getAllEmployees = async (req, res) => {
 // Get employee by ID
 export const getEmployeeById = async (req, res) => {
     try {
-        // const employee = await Employee.findById(req.params.id);
         const employee = await Employee.findOne({ login_id: req.params.id }).exec();
         if (!employee) {
             return res.status(404).json({ message: 'Employee not found' });
@@ -87,7 +70,6 @@ export const getEmployeeById = async (req, res) => {
 // Update employee by ID
 export const updateEmployeeById = async (req, res) => {
     try {
-        // const updatedEmployee = await Employee.findByIdAndUpdate(req.params.id, req.body, { new: true });
         const updatedEmployee = await Employee.findOneAndUpdate({ login_id: req.params.id }, req.body, { new: true });
         
         if (!updatedEmployee) {
@@ -113,4 +95,3 @@ export const deleteEmployeeById = async (req, res) => {
 };
 
 export const getFormData = () => formData;
-

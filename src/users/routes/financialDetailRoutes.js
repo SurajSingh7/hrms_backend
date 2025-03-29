@@ -1,4 +1,3 @@
-// routes/financialDetailRoutes.js
 import express from 'express';
 import {
     createFinancialDetail,
@@ -10,7 +9,6 @@ import {
 
 const router = express.Router();
 
-// CRUD operations
 router.post('/financial-details', createFinancialDetail);
 router.get('/financial-details', getAllFinancialDetails);
 router.get('/financial-details/:id', getFinancialDetailById);

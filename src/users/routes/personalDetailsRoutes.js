@@ -1,4 +1,3 @@
-// routes/personalDetailsRoutes.js
 import express from 'express';
 import {
     createPersonalDetails,
@@ -10,7 +9,6 @@ import {
 
 const router = express.Router();
 
-// CRUD operations
 router.post('/personal-details', createPersonalDetails);
 router.get('/personal-details', getAllPersonalDetails);
 router.get('/personal-details/:id', getPersonalDetailsById);

@@ -12,22 +12,6 @@ const getAllShifts = async (req, res) => {
 let formData = {};
 const createShift = async (req, res) => {
     formData.step5 = req.body;
-  //   console.log("shift 15",req.body)
-  // const { shiftName, fromTime, toTime } = req.body;
-
-  // const newShift = new Shift({
-  //    shiftName,
-  //  fromTime,
-  //    toTime,
-  //  });
-
-  // try {
-  //   //  const savedShift = await newShift.save();
-  //   return res.status(201).json(savedShift);
-  // } catch (error) {
-  //   return res.status(400).json({ error: error.message });
-  //  }
-
   return res.status(200).send('Step 5 data stored shift');
 };
 

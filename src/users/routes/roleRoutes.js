@@ -5,5 +5,5 @@ const router = express.Router();
 router.post('/role/create',createRole);
 router.put("/role/:id", updateRole);
 router.get('/role',getRole);
-export default router;
 
+export default router;

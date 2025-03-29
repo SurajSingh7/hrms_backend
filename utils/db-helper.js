@@ -55,6 +55,16 @@ class DBHelper {
             return null;
         }
     }
+
+    static async findByCriteria(model,critertia){
+        try{
+            return await model.findOne(critertia);
+        }
+        catch(error){
+            console.error(`DBHelper.findByCriteria Error: ${error.message}`);
+            return null;
+        }
+    }
 }
 
 export default DBHelper;
